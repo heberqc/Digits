@@ -19,6 +19,8 @@ public class Digitos extends View {
 	int nCol = 4;
 	float wButton;
 	float hButton;
+	StringBuilder input;
+	char digit = '0';
 
 	public Digitos(Context context) {
 		super(context);
@@ -69,18 +71,29 @@ public class Digitos extends View {
 						* (2 * i + 1) / 2, (4 * j + 7) * hButton / 4, paint);
 			}
 		}
+		if (input == null) {
+			input = new StringBuilder();
+		}
 		canvas.drawText(String.valueOf(DIGITS[12]), 0.875f * wView,
 				3 * hButton / 4, paint);
-
+		paint.setTextAlign(Paint.Align.RIGHT);
+		canvas.drawText(input.toString(), 0.74f * wView, 3 * hButton / 4, paint);
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int action = event.getAction();
+		float x = event.getX();
+		float y = event.getY();
 		if (action == MotionEvent.ACTION_DOWN) {
-			if (event.getY() > hButton) {
-
+			if (y > hButton) {
+				System.out.println("y/hButton = " + y / hButton);
+				System.out.println("x/wButton = " + x / wButton);
+				int pos = (int) (y / hButton - 1) * nCol + (int) (x / wButton);
+				digit = DIGITS[pos];
+				input.append(digit);
+				this.invalidate();
 			}
 		}
 		return super.onTouchEvent(event);
