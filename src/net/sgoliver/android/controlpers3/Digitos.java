@@ -58,7 +58,8 @@ public class Digitos extends View {
 		wView = getMeasuredWidth();
 		wButton = wView / nCol;
 		hButton = hView / (nLine + 1);
-		canvas.drawColor(0xff708090);
+//		canvas.drawColor(0xff708090);
+		canvas.drawColor(0xff009900);
 		Paint paint = new Paint();
 		paint.setColor(0xffff0000);
 		canvas.drawRect(0.75f * wView, 0, wView, hButton, paint);
@@ -88,10 +89,7 @@ public class Digitos extends View {
 		float y = event.getY();
 		if (action == MotionEvent.ACTION_DOWN) {
 			if (y > hButton) {
-				System.out.println("y/hButton = " + y / hButton);
-				System.out.println("x/wButton = " + x / wButton);
-				int pos = (int) (y / hButton - 1) * nCol + (int) (x / wButton);
-				digit = DIGITS[pos];
+				digit = DIGITS[(int) (y / hButton - 1) * nCol + (int) (x / wButton)];
 				input.append(digit);
 				this.invalidate();
 			}
