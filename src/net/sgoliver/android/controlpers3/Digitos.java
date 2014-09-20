@@ -13,14 +13,15 @@ public class Digitos extends View {
 
 	static final char DIGITS[] = { '9', '8', '7', '6', '5', '4', '3', '2',
 			'\u00B1', '/', '0', '1', '\u21D0' };
-	int hView;
-	int wView;
-	int nLine = 3;
-	int nCol = 4;
-	float wButton;
-	float hButton;
-	StringBuilder input;
-	char digit = '0';
+	private int hView;
+	private int wView;
+	private int nLine = 3;
+	private int nCol = 4;
+	private float wButton;
+	private float hButton;
+	private StringBuilder input;
+	private char digit = '0';
+	private String pos = "1,1";
 
 	public Digitos(Context context) {
 		super(context);
@@ -58,7 +59,7 @@ public class Digitos extends View {
 		wView = getMeasuredWidth();
 		wButton = wView / nCol;
 		hButton = hView / (nLine + 1);
-//		canvas.drawColor(0xff708090);
+		// canvas.drawColor(0xff708090);
 		canvas.drawColor(0xff009900);
 		Paint paint = new Paint();
 		paint.setColor(0xffff0000);
@@ -79,6 +80,11 @@ public class Digitos extends View {
 				3 * hButton / 4, paint);
 		paint.setTextAlign(Paint.Align.RIGHT);
 		canvas.drawText(input.toString(), 0.74f * wView, 3 * hButton / 4, paint);
+		paint.setColor(0xff708090);
+		canvas.drawRect(0, 0, 0.20f * wView, hButton, paint);
+		paint.setColor(0xffffffff);
+		canvas.drawText(String.valueOf(pos), 0.8f * wButton, 3 * hButton / 4f,
+				paint);
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -88,13 +94,48 @@ public class Digitos extends View {
 		float x = event.getX();
 		float y = event.getY();
 		if (action == MotionEvent.ACTION_DOWN) {
-			if (y > hButton) {
-				digit = DIGITS[(int) (y / hButton - 1) * nCol + (int) (x / wButton)];
-				input.append(digit);
+			if (x > 0.75f * wView || y > hButton) {
+				if (y > hButton) {
+					digit = DIGITS[(int) (y / hButton - 1) * nCol
+							+ (int) (x / wButton)];
+				} else if (x > 0.75f * wView) {
+					digit = DIGITS[12];
+				}
+				onKey();
 				this.invalidate();
 			}
 		}
 		return super.onTouchEvent(event);
+	}
+
+	public void actualizarPosicion(int f, int c) {
+		pos = f + "," + c;
+	}
+
+	private void onKey() {
+		switch (digit) {
+		case '\u00B1':
+			if (input.length() > 0) {
+				if (input.charAt(0) == '-') {
+					input = new StringBuilder(input.substring(1));
+				} else {
+					input = new StringBuilder("-").append(input);
+				}
+			}
+			break;
+		case '\u21D0':
+			if (input.length() > 0) {
+				input = new StringBuilder(
+						input.substring(0, input.length() - 1));
+			}
+			if (input.length() == 1 && input.charAt(0) == '-') {
+				input = new StringBuilder();
+			}
+			break;
+		default:
+			input.append(digit);
+			break;
+		}
 	}
 
 }
